@@ -88,9 +88,9 @@ If you self-host this project, the same properties apply as long as you serve it
 ## 🛠 Tech Stack
 
 - Static **HTML + CSS + Vanilla JavaScript**
-- No frontend framework
-- Localization via a simple `invoice-i18n.js`
-- Hosted on **GitHub Pages**, fronted by **Cloudflare**
+- No frontend framework  
+- Localization via a simple `invoice-i18n.js`  
+- Hosted on **GitHub Pages**, fronted by **Cloudflare**  
 - QR generation with a tiny JS QR library
 
 ---
@@ -104,32 +104,37 @@ You can host your own copy of InvoCreator.
    ```
    git clone https://github.com/sbozich/invocreator.git
    cd invocreator
-  ```
-   
+   ```
+
 2. Serve the folder with any static file server, for example:
 
-```
-npx serve .
-```
+   ```
+   npx serve .
+   ```
 
 3. Open http://localhost:3000 (or whichever port serve reports).
 
 There is no build step – what’s in the repo is what’s served.
 
-🌍 Roadmap / Ideas
-Additional languages & markets
+---
 
-Extra invoice fields (e.g. purchase order, project name)
+## 🌍 Roadmap / Ideas
 
-Optional multi-currency helper notes
+- Additional languages & markets  
+- Extra invoice fields (e.g. purchase order, project name)  
+- Optional multi-currency helper notes  
+- More payment QR formats where available  
 
-More payment QR formats where available
+---
 
-🤝 Feedback & Support
-Suggestions and comments: modblaises@proton.me
+## 🤝 Feedback & Support
 
-You can support this tool via BuyMeACoffee (link in the site footer).
+- Suggestions and comments: **modblaises@proton.me**  
+- You can support this tool via **[BuyMeACoffee](https://www.buymeacoffee.com/sbozich)**.
 
-📄 License
-Note: Choose a license before publishing this section widely.
-A common choice for tools like this is the MIT License.
+---
+
+## 📄 License
+
+> **Note:** Choose a license before publishing this section widely.  
+> A common choice for tools like this is the MIT License.
