@@ -7,6 +7,12 @@ No signup, no tracking, no data leaves your device – you fill the form, print 
 
 ---
 
+## 📷 Preview
+
+![InvoCreator Screenshot](https://www.textmetricseo.com/assets/img/sshot.jpg)
+
+---
+
 ## ✨ Key Features
 
 - **100% client-side**  
