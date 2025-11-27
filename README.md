@@ -106,15 +106,13 @@ You can host your own copy of InvoCreator.
    cd invocreator
   ```
    
-Serve the folder with any static file server, for example:
-
-
+2. Serve the folder with any static file server, for example:
 
 ```
 npx serve .
 ```
 
-Open http://localhost:3000 (or whichever port serve reports).
+3. Open http://localhost:3000 (or whichever port serve reports).
 
 There is no build step – what’s in the repo is what’s served.
 
