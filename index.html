@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>InvoCreator – Free Invoice Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Basic SEO -->
+  <meta name="description"
+        content="InvoCreator is a free, privacy-first invoice generator that runs entirely in your browser. Create professional invoices with no signup and no tracking.">
+  <link rel="canonical" href="https://www.invocreator.com/">
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="InvoCreator – Free Invoice Generator">
+  <meta property="og:description"
+        content="InvoCreator is a free, privacy-first invoice generator that runs entirely in your browser. Create professional invoices with no signup and no tracking.">
+  <meta property="og:url" content="https://www.invocreator.com/">
+  <meta property="og:site_name" content="InvoCreator">
+  <!-- When you create an OG image, point this to it -->
+  <!-- <meta property="og:image" content="https://www.invocreator.com/assets/img/og-image.png"> -->
+
+  <!-- Twitter cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="InvoCreator – Free Invoice Generator">
+  <meta name="twitter:description"
+        content="InvoCreator is a free, privacy-first invoice generator that runs entirely in your browser.">
+
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16.png">
+  
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="assets/css/invoice.css">
+
+  <!-- QR code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- App scripts -->
+  <script src="assets/js/invoice-i18n.js" defer></script>
+  <script src="assets/js/invoice-core.js" defer></script>
+</head>
+
+<body>
+  <div class="invoice-app">
+
+    <!-- Toolbar: title, language/market, theme, basic actions -->
+    <header class="app-toolbar">
+      <div class="toolbar-left">
+        <div class="app-title-block">
+          <h1 id="app-title">InvoCreator</h1>
+
+          <p id="app-tagline"
+             class="app-tagline"
+             data-i18n="app.tagline">
+            Professional invoices with complete privacy — no signup and zero tracking.
+          </p>
+
+          <p id="app-languages"
+             class="app-languages"
+             data-i18n="app.languages">
+            Languages: EN/US · DE · ES · IT · BHS · SL · SV
+          </p>
+
+          <!-- Sub-actions: documentation + other tools -->
+          <div class="app-sub-actions screen-only">
+            <button
+              id="btn-doc-toggle"
+              type="button"
+              class="btn btn-ghost"
+              data-i18n="btn.showDocs"
+            >
+              Documentation
+            </button>
+
+            <span class="sub-actions-separator">·</span>
+
+            <span class="app-other-tools-label">Other tools:</span>
+            <a href="https://www.listcomparator.com/"
+               target="_blank"
+               rel="noopener noreferrer">
+              ListComparator.com
+            </a>
+            <span>·</span>
+            <a href="https://www.textmetricseo.com/"
+               target="_blank"
+               rel="noopener noreferrer">
+              TextMetricSEO.com
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar-right">
+
+        <div class="toolbar-group">
+          <label
+            for="language-select"
+            id="label-language-select"
+            data-i18n="toolbar.language"
+          >
+            Language / Market
+          </label>
+
+          <select id="language-select">
+            <!-- Logic in JS: map these to modes -->
+            <option value="en_intl">English (International / EU)</option>
+            <option value="en_us">English (United States)</option>
+            <!-- Other languages will be injected from i18n config -->
+          </select>
+        </div>
+
+        <div class="toolbar-group">
+          <label
+            for="theme-toggle"
+            id="label-theme-toggle"
+            data-i18n="toolbar.theme"
+          >
+            Theme
+          </label>
+          <button id="theme-toggle" type="button" class="btn btn-ghost">🌙</button>
+        </div>
+
+        <div class="toolbar-group">
+          <button
+            id="btn-export-json"
+            type="button"
+            class="btn btn-ghost"
+            data-i18n="btn.downloadJson"
+          >
+            Export JSON
+          </button>
+
+          <button
+            id="btn-import-json"
+            type="button"
+            class="btn btn-ghost"
+            data-i18n="btn.loadJson"
+          >
+            Import JSON
+          </button>
+          
+          <button
+            id="btn-print"
+            type="button"
+            class="btn btn-primary"
+            data-i18n="btn.print"
+          >
+            🖨 Print / PDF
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="toolbar-reset-row">
+      <button
+        id="btn-reset-form"
+        type="button"
+        class="btn btn-ghost"
+        data-i18n="btn.reset"
+      >
+        Reset form
+      </button>
+    </div>
+
+    <!-- Hidden file input for JSON import -->
+    <input type="file" id="json-file-input" accept="application/json" style="display:none">
+
+    <!-- MAIN LAYOUT: editor on screen, print-preview built from same data -->
+    <main class="editor-layout">
+
+      <!-- LEFT + RIGHT columns: Seller / Buyer -->
+      <section class="row">
+        <!-- SELLER -->
+        <div class="col col-50">
+          <section class="card" id="seller-section">
+            <h2 id="label-seller-title" data-i18n="section.seller">Seller</h2>
+
+            <div class="logo-block">
+              <img id="seller-logo-preview" alt="Seller logo" class="logo-preview" style="display:none;">
+              <label for="seller-logo" id="label-seller-logo" data-i18n="seller.logo">
+                Seller logo (optional)
+              </label>
+              <input type="file" id="seller-logo" accept="image/*">
+            </div>
+
+            <div class="field-group">
+              <label for="seller-name" id="label-seller-name" data-i18n="seller.name">
+                Name / Company
+              </label>
+              <input type="text" id="seller-name">
+            </div>
+
+            <div class="field-group">
+              <label for="seller-address" id="label-seller-address" data-i18n="seller.address">
+                Address
+              </label>
+              <textarea id="seller-address"></textarea>
+            </div>
+
+            <div class="field-group">
+              <label for="seller-country" id="label-seller-country" data-i18n="seller.country">
+                Country
+              </label>
+              <select id="seller-country"></select>
+            </div>
+
+            <!-- Seller VAT / Tax ID -->
+            <div class="field-group">
+              <label for="seller-tax-id" id="label-seller-tax-id" data-i18n="seller.vatId">
+                VAT / Tax ID
+              </label>
+              <input
+                type="text"
+                id="seller-tax-id"
+                class="text-input"
+              />
+            </div>
+
+            <!-- Seller company registration number -->
+            <div class="field-group">
+              <label
+                for="seller-reg"
+                id="label-seller-reg"
+                data-i18n="seller.regId"
+              >
+                Company registration no.
+              </label>
+              <input
+                type="text"
+                id="seller-reg"
+                class="text-input"
+              />
+            </div>
+
+            <div class="field-group">
+              <label for="seller-ref" id="label-seller-ref" data-i18n="seller.reference">
+                Reference number
+              </label>
+              <input type="text" id="seller-ref">
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label for="seller-email" id="label-seller-email" data-i18n="seller.email">
+                  Email
+                </label>
+                <input type="text" id="seller-email">
+              </div>
+              <div class="field-group">
+                <label for="seller-phone" id="label-seller-phone" data-i18n="seller.phone">
+                  Phone
+                </label>
+                <input type="text" id="seller-phone">
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="seller-website" id="label-seller-website" data-i18n="seller.website">
+                Website
+              </label>
+              <input type="text" id="seller-website">
+            </div>
+
+            <!-- Banking: IBAN or local account, plus optional US routing & SWIFT/BIC -->
+            <div class="field-group" data-mode="eu">
+              <label for="seller-iban" id="label-seller-iban" data-i18n="seller.iban">
+                IBAN
+              </label>
+              <input type="text" id="seller-iban">
+              <div id="iban-status" class="hint-text"></div>
+            </div>
+
+            <div class="field-group">
+              <label for="seller-account" id="label-seller-account" data-i18n="seller.bankAccount">
+                Bank account (non-IBAN)
+              </label>
+              <input type="text" id="seller-account">
+            </div>
+
+            <div class="field-row us-only">
+              <div class="field-group">
+                <label
+                  for="seller-routing"
+                  id="label-seller-routing"
+                  data-i18n="seller.routing"
+                >
+                  Routing number (US)
+                </label>
+                <input type="text" id="seller-routing">
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="seller-bic" id="label-seller-bic" data-i18n="seller.swift">
+                SWIFT / BIC (optional)
+              </label>
+              <input type="text" id="seller-bic">
+            </div>
+          </section>
+        </div>
+
+        <!-- BUYER and PRO SECTION -->
+        <div class="col col-50">
+          <!-- Buyer Card -->
+          <section class="card" id="buyer-section">
+            <h2 id="label-buyer-title" data-i18n="section.buyer">Buyer</h2>
+
+            <div class="logo-block">
+              <img id="buyer-logo-preview" alt="Buyer logo" class="logo-preview" style="display:none;">
+              <label for="buyer-logo" id="label-buyer-logo" data-i18n="buyer.logo">
+                Buyer logo (optional)
+              </label>
+              <input type="file" id="buyer-logo" accept="image/*">
+            </div>
+
+            <div class="field-group">
+              <label for="buyer-name" id="label-buyer-name" data-i18n="buyer.name">
+                Name / Company
+              </label>
+              <input type="text" id="buyer-name">
+            </div>
+
+            <div class="field-group">
+              <label for="buyer-address" id="label-buyer-address" data-i18n="buyer.address">
+                Address
+              </label>
+              <textarea id="buyer-address"></textarea>
+            </div>
+
+            <div class="field-group">
+              <label for="buyer-country" id="label-buyer-country" data-i18n="buyer.country">
+                Country
+              </label>
+              <select id="buyer-country"></select>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label for="buyer-tax-id" id="label-buyer-tax-id" data-i18n="buyer.vatId">
+                  VAT / Tax ID
+                </label>
+                <input type="text" id="buyer-tax-id">
+              </div>
+              <div class="field-group">
+                <label for="buyer-customer" id="label-buyer-customer" data-i18n="buyer.customerNumber">
+                  Customer number
+                </label>
+                <input type="text" id="buyer-customer">
+              </div>
+            </div>
+          </section>
+
+          <!-- PRO Teaser Card (Now with i18n attributes) -->
+          <section class="card premium-teaser screen-only">
+            <div class="premium-pill" data-i18n="pro.badge">PRO</div>
+            <div class="premium-teaser-text">
+              <div class="premium-teaser-title" data-i18n="pro.title">
+                Advanced features, one click away
+              </div>
+              <div class="premium-teaser-subtitle" data-i18n="pro.subtitle">
+                This area will unlock extra layouts, presets and smart helpers in a future premium version.
+              </div>
+              <ul class="premium-teaser-list">
+                <li data-i18n="pro.features.smartPdf">Smart PDF naming</li>
+                <li data-i18n="pro.features.customFooter">Custom footer presets</li>
+                <li data-i18n="pro.features.multiSeller">Multiple seller profiles</li>
+                <li data-i18n="pro.features.savedBuyers">Saved buyers & contacts</li>
+                <li data-i18n="pro.features.extraLayouts">Extra invoice layouts (A/B)</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- INVOICE META + PAYMENT DETAILS -->
+      <section class="row">
+        <!-- Invoice details -->
+        <div class="col col-50">
+          <section class="card" id="invoice-details-section">
+            <h2 id="label-invoice-details-title" data-i18n="section.invoiceDetails">
+              Invoice details
+            </h2>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label for="invoice-number" id="label-invoice-number" data-i18n="invoice.number">
+                  Invoice number
+                </label>
+                <div class="inline-with-button">
+                  <input type="text" id="invoice-number">
+                </div>
+              </div>
+              <div class="field-group">
+                <label for="invoice-date" id="label-invoice-date" data-i18n="invoice.date">
+                  Invoice date
+                </label>
+                <input type="date" id="invoice-date">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label for="due-date" id="label-due-date" data-i18n="invoice.dueDate">
+                  Due date
+                </label>
+                <input type="date" id="due-date">
+              </div>
+              <div class="field-group">
+                <label for="currency-select" id="label-currency-select" data-i18n="invoice.currency">
+                  Currency
+                </label>
+                <select id="currency-select"></select>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Payment details -->
+        <div class="col col-50">
+          <section class="card" id="payment-details-section">
+            <h2 id="label-payment-details-title" data-i18n="section.payment">
+              Payment details
+            </h2>
+
+            <div class="field-group">
+              <label for="notes" id="label-notes" data-i18n="notes.label">
+                Notes
+              </label>
+              <textarea
+                id="notes"
+                data-i18n="notes.placeholder"
+                data-i18n-attr="placeholder"
+                placeholder="Payment terms, legal notes, project description…"
+              ></textarea>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- LINE ITEMS -->
+      <section class="card" id="items-section">
+        <div class="section-header">
+          <h2 id="label-items-title" data-i18n="section.items">Items</h2>
+          <button
+            type="button"
+            id="btn-add-item"
+            class="btn btn-outline"
+            data-i18n="items.addItem"
+          >
+            + Add item
+          </button>
+        </div>
+
+        <table id="items-table">
+          <thead>
+            <tr>
+              <th id="th-desc" class="text-left" data-i18n="items.description">Description</th>
+              <th id="th-period" class="text-center" data-i18n="items.period">Period</th>
+              <th id="th-qty" class="text-right" data-i18n="items.quantity">Qty</th>
+              <th id="th-unit" class="text-center" data-i18n="items.unit">Unit</th>
+              <th id="th-unit-price" class="text-right" data-i18n="items.unitPrice">
+                Unit price (net)
+              </th>
+<th id="th-line-total" class="text-right" data-i18n="items.lineTotal">
+  Amount (net)
+</th>
+
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="items-tbody">
+            <!-- Rows will be generated by JS -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- TOTALS + QR + REVERSE CHARGE + SIGNATURE/STAMP -->
+      <section class="row bottom-row">
+        <div class="col col-60">
+          <section class="card" id="info-section">
+            <div class="field-group">
+              <label class="checkbox-inline">
+                <input type="checkbox" id="reverse-charge">
+                <span id="label-reverse-charge" data-i18n="payment.reverseCharge">
+                  Reverse charge (VAT paid by recipient)
+                </span>
+              </label>
+              <p id="reverse-charge-text" class="hint-text" style="display:none;"></p>
+            </div>
+
+            <div class="field-group">
+              <label class="checkbox-inline">
+                <input type="checkbox" id="qr-enabled">
+                <span id="label-qr-enabled" data-i18n="payment.showQr">
+                  Payment QR (SEPA for EUR, generic otherwise)
+                </span>
+              </label>
+              <div id="qr-wrapper" class="qr-wrapper" style="display:none;">
+                <div id="qr-code"></div>
+                <p
+                  id="label-qr-note"
+                  class="hint-text"
+                  data-i18n="payment.qrHint"
+                >
+                  Scan to prefill payment: account, amount, currency and invoice number.
+                </p>
+              </div>
+            </div>
+
+            <div class="signature-stamp-row">
+              <div class="signature-block">
+                <label
+                  for="signature-file"
+                  id="label-signature-file"
+                  data-i18n="sign.signatureImage"
+                >
+                  Signature image (optional)
+                </label>
+                <input type="file" id="signature-file" accept="image/*">
+                <img
+                  id="signature-preview"
+                  alt="Signature"
+                  class="signature-preview"
+                  style="display:none;"
+                >
+                <div
+                  id="label-signature-caption"
+                  class="hint-text"
+                  data-i18n="sign.author"
+                >
+                  Author / Signature
+                </div>
+              </div>
+
+              <div class="stamp-block">
+                <label
+                  for="stamp-file"
+                  id="label-stamp-file"
+                  data-i18n="sign.stampImage"
+                >
+                  Stamp image (optional)
+                </label>
+                <input type="file" id="stamp-file" accept="image/*">
+                <img
+                  id="stamp-preview"
+                  alt="Stamp"
+                  class="stamp-preview"
+                  style="display:none;"
+                >
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="col col-40">
+          <section class="card totals-card">
+            <table class="totals-table">
+              <tr>
+                <td
+                  id="label-subtotal"
+                  class="label-cell"
+                  data-i18n="totals.subtotal"
+                >
+                  Subtotal (net)
+                </td>
+                <td id="subtotal-value" class="value-cell text-right">0.00</td>
+              </tr>
+              <tr>
+                <td class="label-cell">
+                  <span id="label-tax">VAT</span>
+                  (<input
+                    type="number"
+                    id="tax-rate"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value="0"
+                    class="tax-rate-input"
+                  > %)
+                </td>
+                <td id="tax-value" class="value-cell text-right">0.00</td>
+              </tr>
+              <tr class="grand-total-row">
+                <td
+                  id="label-total"
+                  class="label-cell grand-total-label"
+                  data-i18n="totals.total"
+                >
+                  Total (gross)
+                </td>
+                <td
+                  id="total-value"
+                  class="value-cell text-right grand-total-value"
+                >
+                  0.00
+                </td>
+              </tr>
+            </table>
+          </section>
+
+          <!-- Templates controls -->
+          <section class="card templates-card">
+            <div class="field-group">
+              <label
+                for="template-select"
+                id="label-template-select"
+                data-i18n="templates.title"
+              >
+                Templates
+              </label>
+              <div class="inline-with-button">
+                <select id="template-select">
+                  <option value="">--</option>
+                </select>
+                <button
+                  type="button"
+                  id="btn-save-template"
+                  class="btn btn-ghost"
+                  data-i18n="templates.save"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  id="btn-delete-template"
+                  class="btn btn-ghost"
+                  data-i18n="templates.delete"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+    </main>
+  </div>
+  <!-- Documentation modal -->
+  <div id="doc-modal" class="doc-modal" aria-hidden="true">
+      <div class="doc-modal-backdrop"></div>
+
+      <div class="doc-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="doc-modal-title">
+        <div class="doc-modal-header">
+          <h2 id="doc-modal-title"></h2>
+          <button
+            type="button"
+            class="doc-modal-close"
+            id="doc-modal-close"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="doc-modal-body">
+          <nav class="doc-modal-toc" id="doc-modal-toc"></nav>
+          <div class="doc-modal-content" id="doc-modal-content"></div>
+        </div>
+      </div>
+    </div>
+
+<footer class="site-footer screen-only">
+  <div class="site-footer-inner">
+    <p>
+      Created by Sinisa Bozic ·
+      <a href="mailto:modblaises@proton.me">Suggestions and comments</a> are appreciated!
+    </p>
+
+    <a href="https://www.buymeacoffee.com/sbozich"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="bmc-footer-button">
+      ☕ Support this tool
+    </a>
+  </div>
+</footer>
+
+
+</body>
+</html>
+

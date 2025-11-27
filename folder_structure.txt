@@ -1,0 +1,8 @@
+invoice/
+  index.html
+  assets/
+    css/
+      invoice.css
+    js/
+      invoice-i18n.js
+      invoice-core.js
