@@ -17,11 +17,27 @@ const LANG_DEFAULT_COUNTRY = {
   bhs:     ""
 };
 
+// Locale used for number formatting per language
+const LANG_NUMBER_LOCALE = {
+  en_intl: "de-DE", // English, EU-style
+  en_us:   "en-US",
+  de_de:   "de-DE",
+  es_es:   "es-ES",
+  it_it:   "it-IT",
+  sl_si:   "sl-SI",
+  sv_se:   "sv-SE",
+  bhs:     "de-DE"  // B/H/S – comma decimal, dot thousands
+};
+
 	let currentLangKey = "en_intl";
 	let qrInstance = null;
 	let lastQrData = "";              // NEW: remembered QR content
 	let darkTheme = false;
 	let storedTaxRateBeforeReverse = null; // NEW: remember tax before reverse charge
+  let lastSubtotalRaw = 0;
+  let lastTaxRaw = 0;
+  let lastTotalRaw = 0;
+
 
   // --- i18n helpers for title & <html lang> -----------------------------
 
@@ -54,6 +70,37 @@ const LANG_DEFAULT_COUNTRY = {
     if (!isFinite(num)) return "0.00";
     return num.toFixed(2);
   }
+
+  function formatDisplayNumber(num) {
+  if (!isFinite(num)) return "0.00";
+
+  const cfg = getCurrentLanguageConfig();
+  const langKey = currentLangKey || "en_intl";
+
+  const locale =
+    (cfg && cfg.settings && cfg.settings.numberLocale) ||
+    LANG_NUMBER_LOCALE[langKey] ||
+    "en-GB";
+
+  if (typeof Intl !== "undefined" && Intl.NumberFormat) {
+    // cache per-locale formatter on the function
+    if (!formatDisplayNumber._cache) {
+      formatDisplayNumber._cache = {};
+    }
+    const key = locale + "|2";
+    if (!formatDisplayNumber._cache[key]) {
+      formatDisplayNumber._cache[key] = new Intl.NumberFormat(locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+    return formatDisplayNumber._cache[key].format(num);
+  }
+
+  // Fallback: old behaviour
+  return formatNumber(num);
+}
+
 
   function getCurrentLanguageConfig() {
     return LANGS[currentLangKey] || LANGS["en_intl"];
@@ -662,9 +709,10 @@ function updateIbanStatus() {
     function recalcRowAndTotals() {
       const qty = parseFloat(qtyInput.value.replace(",", ".")) || 0;
       const price = parseFloat(priceInput.value.replace(",", ".")) || 0;
-      const line = qty * price;
-      lineTotalSpan.textContent = formatNumber(line);
-      recalcTotals();
+const line = qty * price;
+lineTotalSpan.textContent = formatDisplayNumber(line);
+recalcTotals();
+
     }
 
     qtyInput.addEventListener("input", recalcRowAndTotals);
@@ -717,30 +765,39 @@ function updateIbanStatus() {
   }
 
   // ---------- TOTALS ----------
-  function recalcTotals() {
-    const items = getItemsFromDom();
-    let subtotal = 0;
-    items.forEach((it) => {
-      subtotal += it.quantity * it.unitPrice;
-    });
-    $("subtotal-value").textContent = formatNumber(subtotal);
+function recalcTotals() {
+  const items = getItemsFromDom();
+  let subtotal = 0;
+  items.forEach((it) => {
+    subtotal += it.quantity * it.unitPrice;
+  });
 
-    const taxRateInput = $("tax-rate");
-    let rate = 0;
-    if (taxRateInput) {
-      const raw = taxRateInput.value;
-      rate = parseFloat(String(raw).replace(",", ".")) || 0;
-    }
-
-    const taxAmount = subtotal * (rate / 100);
-    $("tax-value").textContent = formatNumber(taxAmount);
-    $("total-value").textContent = formatNumber(subtotal + taxAmount);
-
-    // Update QR if enabled
-    if ($("qr-enabled") && $("qr-enabled").checked) {
-      generateOrUpdateQr();
-    }
+  const taxRateInput = $("tax-rate");
+  let rate = 0;
+  if (taxRateInput) {
+    const raw = taxRateInput.value;
+    rate = parseFloat(String(raw).replace(",", ".")) || 0;
   }
+
+  const taxAmount = subtotal * (rate / 100);
+  const total = subtotal + taxAmount;
+
+  // store raw numeric values for QR / other logic
+  lastSubtotalRaw = subtotal;
+  lastTaxRaw = taxAmount;
+  lastTotalRaw = total;
+
+  // UI: localized formatting
+  $("subtotal-value").textContent = formatDisplayNumber(subtotal);
+  $("tax-value").textContent      = formatDisplayNumber(taxAmount);
+  $("total-value").textContent    = formatDisplayNumber(total);
+
+  // Update QR if enabled
+  if ($("qr-enabled") && $("qr-enabled").checked) {
+    generateOrUpdateQr();
+  }
+}
+
 
   // ---------- LANGUAGE / MODE ----------
   function applyLanguageSettings() {
@@ -837,8 +894,8 @@ if (!cfg.settings.showUsBankFields) {
     const parts = [];
     parts.push("PAYMENT");
     if (account) parts.push("ACC: " + account);
-    if (amount != null && isFinite(amount))
-      parts.push("AMT: " + formatNumber(amount) + " " + (currency || ""));
+if (amount != null && isFinite(amount))
+  parts.push("AMT: " + formatDisplayNumber(amount) + " " + (currency || ""));
     if (reference) parts.push("REF: " + reference);
     return parts.join("\n");
   }
@@ -861,8 +918,9 @@ if (!cfg.settings.showUsBankFields) {
 
     // We attempt to build data:
     const cfg = getCurrentLanguageConfig();
-    const totalStr = $("total-value").textContent || "0";
-    const totalAmount = parseFloat(totalStr.replace(",", ".")) || 0;
+// Use raw numeric total computed in recalcTotals()
+    const totalAmount = lastTotalRaw || 0;
+
     const cur = $("currency-select").value || "";
     const sellerName = $("seller-name").value.trim();
     const iban = $("seller-iban").value.trim();
@@ -1549,8 +1607,9 @@ if (state.buyer.customerNo) {
       if (hasUnit) {
         html.push(`<td>${escapeHtml(item.unit || "")}</td>`);
       }
-      html.push(`<td>${up ? up.toFixed(2) : ""}</td>`);
-      html.push(`<td>${lineTotal ? lineTotal.toFixed(2) : ""}</td>`);
+    html.push(`<td>${up ? formatDisplayNumber(up) : ""}</td>`);
+    html.push(`<td>${lineTotal ? formatDisplayNumber(lineTotal) : ""}</td>`);
+
       html.push("</tr>");
     });
 
