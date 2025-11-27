@@ -438,7 +438,7 @@
 
       // Totals
       "totals.subtotal": "Subtotal (net)",
-      "totals.tax": "Tax/VAT amount",
+      "totals.tax": "Tax/VAT",
       "totals.total": "Total (gross)",
 
       // Notes
