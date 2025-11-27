@@ -1403,3 +1403,10 @@ body.dark-theme #doc-modal .doc-modal-content code {
   text-decoration: none;
   color: #000;
 }
+
+.vat-label-cell label {
+  display: block;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
