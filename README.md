@@ -9,7 +9,7 @@ No signup, no tracking, no data leaves your device – you fill the form, print 
 
 ## 📷 Preview
 
-![InvoCreator Screenshot](https://www.textmetricseo.com/assets/img/sshot.jpg)
+![InvoCreator Screenshot](https://raw.githubusercontent.com/sbozich/invocreator/main/assets/img/sshot.jpg)
 
 ---
 
