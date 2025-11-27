@@ -1285,6 +1285,17 @@ body.dark-theme #doc-modal .doc-modal-content code {
     margin-bottom: 2px;
   }
 
+  /* NEW: flex only on our explicit rows */
+#print-invoice .inv-totals .inv-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;              /* visible space between label and amount */
+}
+
+#print-invoice .inv-total-value {
+  white-space: nowrap;   /* keeps 261378555.90 EUR together */
+}
+
   #print-invoice .inv-totals div strong {
     font-weight: 600;
   }

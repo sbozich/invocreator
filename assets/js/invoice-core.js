@@ -1561,25 +1561,47 @@ if (state.buyer.customerNo) {
     html.push('<div class="inv-totals-row">');
     html.push('<div class="inv-totals inv-block">');
 
-    const subtotalLbl = label("totals.subtotal", "Subtotal (net)");
-    const taxLbl = label("totals.tax", "VAT amount");
-    const totalLbl = label("totals.total", "Total (gross)");
+const subtotalLbl = label("totals.subtotal", "Subtotal (net)");
+const taxLblBase  = label("totals.tax", "VAT amount");
+const totalLbl    = label("totals.total", "Total (gross)");
 
-    html.push(
-      `<div><strong>${escapeHtml(subtotalLbl)}:</strong> ${escapeHtml(
-        subtotal
-      )} ${escapeHtml(cur)}</div>`
-    );
-    html.push(
-      `<div><strong>${escapeHtml(taxLbl)}:</strong> ${escapeHtml(
-        tax
-      )} ${escapeHtml(cur)}</div>`
-    );
-    html.push(
-      `<div><strong>${escapeHtml(totalLbl)}:</strong> ${escapeHtml(
-        total
-      )} ${escapeHtml(cur)}</div>`
-    );
+const taxRateStr = (state.taxRate || "").toString().trim();
+const taxLbl = taxRateStr
+  ? `${taxLblBase} (${taxRateStr}%)`
+  : taxLblBase;
+
+html.push(
+  `<div class="inv-total-row">
+     <span class="inv-total-label">
+       <strong>${escapeHtml(subtotalLbl)}:</strong>
+     </span>
+     <span class="inv-total-value">
+       ${escapeHtml(subtotal)} ${escapeHtml(cur)}
+     </span>
+   </div>`
+);
+
+html.push(
+  `<div class="inv-total-row">
+     <span class="inv-total-label">
+       <strong>${escapeHtml(taxLbl)}:</strong>
+     </span>
+     <span class="inv-total-value">
+       ${escapeHtml(tax)} ${escapeHtml(cur)}
+     </span>
+   </div>`
+);
+
+html.push(
+  `<div class="inv-total-row">
+     <span class="inv-total-label">
+       <strong>${escapeHtml(totalLbl)}:</strong>
+     </span>
+     <span class="inv-total-value">
+       ${escapeHtml(total)} ${escapeHtml(cur)}
+     </span>
+   </div>`
+);
 
     if (state.payment.reverseCharge) {
       html.push(

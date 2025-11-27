@@ -5,7 +5,7 @@
       code: "en_intl",
       name: "English (International / EU)",
       settings: {
-        taxLabel: "VAT",
+        taxLabel: "VAT (%)",
         defaultCurrency: "EUR",
         dateFormat: "eu", // dd/MM/YYYY for display/print
         reverseChargeEnabled: true,
@@ -18,7 +18,7 @@
       code: "en_us",
       name: "English (United States)",
       settings: {
-        taxLabel: "Tax",
+        taxLabel: "Tax (%)",
         defaultCurrency: "USD",
         dateFormat: "us", // MM/DD/YYYY for display/print
         reverseChargeEnabled: false,
@@ -31,7 +31,7 @@
       code: "sv_se",
       name: "Svenska (Sverige)",
       settings: {
-        taxLabel: "Moms",
+        taxLabel: "Moms (%)",
         defaultCurrency: "SEK",
         // Sweden is ISO-friendly: 2025-11-06
         dateFormat: "iso",
@@ -45,7 +45,7 @@
       code: "sl_si",
       name: "Slovenščina (Slovenija)",
       settings: {
-        taxLabel: "DDV",
+        taxLabel: "DDV (%)",
         defaultCurrency: "EUR",
         // Slovenian style: 06.11.2025
         dateFormat: "dot-eu",
@@ -60,7 +60,7 @@
       code: "de_de",
       name: "Deutsch (D-A-CH)",
       settings: {
-        taxLabel: "MwSt",
+        taxLabel: "MwSt (%)",
         defaultCurrency: "EUR",
         dateFormat: "dot-eu", // 06.11.2025
         reverseChargeEnabled: true,
@@ -73,7 +73,7 @@
       code: "bhs",
       name: "B/H/S (bosanski / hrvatski / srpski)",
       settings: {
-        taxLabel: "PDV",
+        taxLabel: "PDV (%)",
         defaultCurrency: "", // user selects BAM, EUR, RSD, etc.
         dateFormat: "dot-eu", // DD.MM.YYYY
         reverseChargeEnabled: true, // users in HR, BA, RS can enable if needed
@@ -87,7 +87,7 @@
       code: "it_it",
       name: "Italiano (Italia)",
       settings: {
-        taxLabel: "IVA",
+        taxLabel: "IVA (%)",
         defaultCurrency: "EUR",
         dateFormat: "eu", // DD/MM/YYYY
         reverseChargeEnabled: true,
@@ -101,7 +101,7 @@
       code: "es_es",
       name: "Español (España)",
       settings: {
-        taxLabel: "IVA",
+        taxLabel: "IVA (%)",
         defaultCurrency: "EUR",
         dateFormat: "eu", // DD/MM/YYYY
         reverseChargeEnabled: true,
@@ -438,7 +438,7 @@
 
       // Totals
       "totals.subtotal": "Subtotal (net)",
-      "totals.tax": "Tax amount/VAT for EU",
+      "totals.tax": "Tax/VAT amount",
       "totals.total": "Total (gross)",
 
       // Notes
