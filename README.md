@@ -7,6 +7,12 @@ No signup, no tracking, no data leaves your device – you fill the form, print 
 
 ---
 
+## 📷 Preview
+
+![InvoCreator Screenshot](https://raw.githubusercontent.com/sbozich/invocreator/main/assets/img/sshot.jpg)
+
+---
+
 ## ✨ Key Features
 
 - **100% client-side**  
