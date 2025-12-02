@@ -1473,3 +1473,8 @@ body.dark-theme #doc-modal .doc-modal-content code {
   white-space: nowrap;
 }
 
+/* Email sanity check visual hint */
+.input-invalid {
+  border-color: #d32f2f !important;
+  background-color: #ffebee !important;
+}

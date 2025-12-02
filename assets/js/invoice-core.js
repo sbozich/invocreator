@@ -86,6 +86,28 @@ const LANG_NUMBER_LOCALE = {
     });
   }
 
+// Very simple email sanity check (non-blocking)
+function isEmailPlausible(value) {
+  if (!value) return true; // empty = allowed
+  // forgiving: allows letters, numbers, dots, hyphens, underscores
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(value.trim());
+}
+
+function attachEmailSanityCheck(input) {
+  if (!input) return;
+  input.addEventListener("input", () => {
+    const ok = isEmailPlausible(input.value);
+    if (!ok) {
+      input.classList.add("input-invalid");
+    } else {
+      input.classList.remove("input-invalid");
+    }
+  });
+}
+
+
+
   function formatNumber(num) {
     if (!isFinite(num)) return "0.00";
     return num.toFixed(2);
@@ -1959,6 +1981,8 @@ function applyDefaultSellerCountryIfEmpty(langKey) {
         // Smart prefill: default seller country based on language (if empty)
     applyAppTitleI18n();     // ← ADD THIS LINE
     applyDefaultSellerCountryIfEmpty(currentLangKey);
+    attachEmailSanityCheck($("seller-email"));
+    attachEmailSanityCheck($("buyer-email"));
 
 
 
