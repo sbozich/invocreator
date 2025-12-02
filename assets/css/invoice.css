@@ -17,6 +17,11 @@
   --shadow-soft: 0 4px 18px rgba(0, 0, 0, 0.06);
   --font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+    /* Button palette (light theme defaults) */
+  --btn-bg: var(--bg-accent);
+  --btn-border: var(--bg-accent);
+  --btn-text: var(--text-invert);
+
 }
 
 body {
@@ -134,14 +139,15 @@ body {
 .btn {
   border-radius: 999px;
   padding: 0.33rem 0.85rem;
-  border: 1px solid var(--bg-accent);
-  background: var(--bg-accent);
-  color: var(--text-invert);
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-size: 0.85rem;
   cursor: pointer;
   line-height: 1.4;
   white-space: nowrap;
 }
+
 
 .btn:hover {
   filter: brightness(0.95);
@@ -599,6 +605,11 @@ textarea {
 body.dark-theme {
   background: #121212;
   color: #e5e5e5;
+
+  /* Dark theme button palette – darker, less flashy */
+  --btn-bg: #0b3a6d;     /* deep navy instead of bright blue */
+  --btn-border: #90caf9; /* light blue outline */
+  --btn-text: #e3f2fd;   /* soft, not pure white */
 }
 
 body.dark-theme .invoice-app {
@@ -630,9 +641,9 @@ body.dark-theme .hint-text {
   color: #999999;
 }
 
-body.dark-theme .btn {
-  border-color: #90caf9;
-  background: #1976d2;
+/* Ensure Items header is readable in dark theme */
+body.dark-theme #label-items-title {
+  color: #f5f5f5;
 }
 
 body.dark-theme .btn-ghost {
@@ -657,6 +668,22 @@ body.dark-theme .btn-outline,
   color: #90caf9;            /* visible text on dark background */
   border-color: #90caf9;     /* match text color */
 }
+
+/* PRO teaser in dark theme */
+body.dark-theme .premium-teaser {
+  background: rgba(144, 202, 249, 0.06); /* very soft blue glow */
+  border-color: #444444;                 /* darker dashed border */
+}
+
+body.dark-theme .premium-pill {
+  background: #90caf9;   /* light blue chip */
+  color: #0b1726;        /* dark text so it stays readable */
+}
+
+body.dark-theme .premium-teaser-subtitle {
+  color: #c0c4cc;        /* brighten muted text for contrast */
+}
+
 
 /* ================================
    Documentation modal

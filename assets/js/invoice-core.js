@@ -66,6 +66,26 @@ const LANG_NUMBER_LOCALE = {
     return document.getElementById(id);
   }
 
+
+  // Allow only digits, comma and dot in a text input
+  function attachNumericFilter(input) {
+    if (!input) return;
+    input.addEventListener("input", function () {
+      const oldValue = input.value;
+      const filtered = oldValue.replace(/[^0-9.,]/g, "");
+      if (filtered !== oldValue) {
+        const pos = input.selectionStart;
+        input.value = filtered;
+        // best-effort caret correction
+        if (typeof pos === "number") {
+          const diff = oldValue.length - filtered.length;
+          const newPos = Math.max(0, pos - diff);
+          input.setSelectionRange(newPos, newPos);
+        }
+      }
+    });
+  }
+
   function formatNumber(num) {
     if (!isFinite(num)) return "0.00";
     return num.toFixed(2);
@@ -656,11 +676,11 @@ function updateIbanStatus() {
     const tdQty = document.createElement("td");
     tdQty.className = "text-right";
     const qtyInput = document.createElement("input");
-    qtyInput.type = "number";
-    qtyInput.min = "0";
-    qtyInput.step = "0.01";
+    qtyInput.type = "text";
+    qtyInput.inputMode = "decimal";
     qtyInput.className = "item-qty-input";
     qtyInput.value = initial.quantity != null ? initial.quantity : "";
+    attachNumericFilter(qtyInput);
     tdQty.appendChild(qtyInput);
     tr.appendChild(tdQty);
 
@@ -678,14 +698,15 @@ function updateIbanStatus() {
     const tdPrice = document.createElement("td");
     tdPrice.className = "text-right";
     const priceInput = document.createElement("input");
-    priceInput.type = "number";
-    priceInput.min = "0";
-    priceInput.step = "0.01";
+    priceInput.type = "text";
+    priceInput.inputMode = "decimal";
     priceInput.className = "item-unit-price-input";
     priceInput.value =
       initial.unitPrice != null ? String(initial.unitPrice) : "";
+    attachNumericFilter(priceInput);
     tdPrice.appendChild(priceInput);
     tr.appendChild(tdPrice);
+
 
     // Line total (read-only)
     const tdLineTotal = document.createElement("td");
@@ -2021,6 +2042,10 @@ if (langSel) {
         }
       });
       taxRateInput.addEventListener("input", recalcTotals);
+
+
+  // Allow only digits, comma and dot
+  attachNumericFilter(taxRateInput);
     }
 
     // Currency change should update QR

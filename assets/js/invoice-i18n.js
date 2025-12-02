@@ -373,6 +373,7 @@
 "app.title": "Free Invoice Generator",
 "app.tagline": "Professional invoices with complete privacy — no signup and zero tracking.",
 "app.languages": "Languages: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Other tools:",
 
       "toolbar.language": "Language / Market",
       "toolbar.theme": "Theme",
@@ -604,6 +605,7 @@
 "app.title": "Free Invoice Generator",
 "app.tagline": "Create professional invoices with full privacy — no signup and zero tracking.",
 "app.languages": "Languages: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Other tools:",
 
 
       // Sections
@@ -742,6 +744,7 @@
 "app.title": "Kostenloser Rechnungsgenerator",
 "app.tagline": "Professionelle Rechnungen mit vollständigem Datenschutz — keine Registrierung, kein Tracking.",
 "app.languages": "Sprachen: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Weitere Tools:",
 
       "toolbar.language": "Sprache / Markt",
       "toolbar.theme": "Thema",
@@ -960,6 +963,8 @@
 "app.title": "Generatore di fatture gratuito",
 "app.tagline": "Fatture professionali con completa privacy — nessuna registrazione e nessun tracciamento.",
 "app.languages": "Lingue: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Altri strumenti:",
+
 
       "toolbar.language": "Lingua / Mercato",
       "toolbar.theme": "Tema",
@@ -1178,6 +1183,8 @@
 "app.title": "Generador de facturas gratuito",
 "app.tagline": "Facturas profesionales con total privacidad — sin registro y sin seguimiento.",
 "app.languages": "Idiomas: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Otras herramientas:",
+
 
       "toolbar.language": "Idioma / Mercado",
       "toolbar.theme": "Tema",
@@ -1398,6 +1405,7 @@
 "app.title": "Gratis fakturagenerator",
 "app.tagline": "Professionella fakturor med fullständig integritet — ingen registrering och ingen spårning.",
 "app.languages": "Språk: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Andra verktyg:",
 
       "toolbar.language": "Språk / Marknad",
       "toolbar.theme": "Tema",
@@ -1616,6 +1624,7 @@
 "app.title": "Brezplačni izdelovalec računov",
 "app.tagline": "Profesionalni računi s popolno zasebnostjo — brez registracije in brez sledenja.",
 "app.languages": "Jeziki: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Druga orodja:",
 
       "toolbar.language": "Jezik / Trg",
       "toolbar.theme": "Tema",
@@ -1835,6 +1844,8 @@
 "app.title": "Besplatan generator faktura",
 "app.tagline": "Profesionalne fakture uz potpunu privatnost — bez registracije i bez praćenja.",
 "app.languages": "Jezici: EN/US · DE · ES · IT · BHS · SL · SV",
+"app.otherTools": "Ostali alati:",
+
 
       "toolbar.language": "Jezik / Tržište",
       "toolbar.theme": "Tema",
