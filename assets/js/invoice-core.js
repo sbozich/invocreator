@@ -86,6 +86,44 @@ const LANG_NUMBER_LOCALE = {
     });
   }
 
+  // Very soft heuristic for VAT / Tax ID (non-blocking)
+function isTaxIdSuspicious(value) {
+  if (!value) return false; // empty is allowed, no warning
+
+  const v = value.trim();
+
+  // Extremely short IDs are suspicious in most markets
+  if (v.length > 0 && v.length < 4) return true;
+
+  // Tax IDs should contain at least one digit (DE, AT, IT, etc.)
+  if (!/[0-9]/.test(v)) return true;
+
+  // Clearly wrong characters – email-like or punctuation noise
+  if (/[!@#$%^&*_=+<>?~]/.test(v)) return true;
+
+  // Otherwise we assume it's fine (we are intentionally permissive)
+  return false;
+}
+
+function attachTaxIdHeuristic(input) {
+  if (!input) return;
+
+  function update() {
+    const suspicious = isTaxIdSuspicious(input.value);
+    if (suspicious) {
+      input.classList.add("input-invalid");
+    } else {
+      input.classList.remove("input-invalid");
+    }
+  }
+
+  // Live feedback while typing
+  input.addEventListener("input", update);
+  // And re-check on blur (e.g. pasted values)
+  input.addEventListener("blur", update);
+}
+
+
 // Very simple email sanity check (non-blocking)
 function isEmailPlausible(value) {
   if (!value) return true; // empty = allowed
@@ -1983,6 +2021,9 @@ function applyDefaultSellerCountryIfEmpty(langKey) {
     applyDefaultSellerCountryIfEmpty(currentLangKey);
     attachEmailSanityCheck($("seller-email"));
     attachEmailSanityCheck($("buyer-email"));
+    attachTaxIdHeuristic($("seller-tax-id"));
+    attachTaxIdHeuristic($("buyer-tax-id"));
+
 
 
 
