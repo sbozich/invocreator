@@ -988,13 +988,13 @@ body.dark-theme #doc-modal .doc-modal-content code {
   }
 
   #items-table {
-    min-width: 600px;
-    font-size: 0.85rem;
+    min-width: 520px;   /* was 600px – trims ~13% width */
+    font-size: 0.8rem;  /* slightly smaller on mobile */
   }
 
   #items-table th,
   #items-table td {
-    padding: 0.25rem 0.35rem;
+    padding: 0.18rem 0.25rem;  /* was 0.25rem 0.35rem */
   }
 
   .templates-row,

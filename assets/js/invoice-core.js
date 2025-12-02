@@ -67,24 +67,39 @@ const LANG_NUMBER_LOCALE = {
   }
 
 
-  // Allow only digits, comma and dot in a text input
-  function attachNumericFilter(input) {
-    if (!input) return;
-    input.addEventListener("input", function () {
-      const oldValue = input.value;
-      const filtered = oldValue.replace(/[^0-9.,]/g, "");
-      if (filtered !== oldValue) {
-        const pos = input.selectionStart;
-        input.value = filtered;
-        // best-effort caret correction
-        if (typeof pos === "number") {
-          const diff = oldValue.length - filtered.length;
-          const newPos = Math.max(0, pos - diff);
-          input.setSelectionRange(newPos, newPos);
-        }
+// Allow only digits, comma and dot in a text input
+function attachNumericFilter(input) {
+  if (!input) return;
+  input.addEventListener("input", function () {
+    const oldValue = input.value;
+
+    // 1) Strip everything except digits, comma, dot
+    let filtered = oldValue.replace(/[^0-9.,]/g, "");
+
+    // 2) Prevent starting with multiple commas/dots
+    if (filtered.length >= 2 && /[.,]/.test(filtered[0])) {
+      let i = 1;
+      while (i < filtered.length && /[.,]/.test(filtered[i])) {
+        i++;
       }
-    });
-  }
+      filtered = filtered[0] + filtered.slice(i);
+    }
+
+    if (filtered !== oldValue) {
+      const pos = input.selectionStart;
+      input.value = filtered;
+
+      // best-effort caret correction
+      if (typeof pos === "number") {
+        const diff = oldValue.length - filtered.length;
+        const newPos = Math.max(0, pos - diff);
+        input.setSelectionRange(newPos, newPos);
+      }
+    }
+  });
+}
+
+
 
   // Very soft heuristic for VAT / Tax ID (non-blocking)
 function isTaxIdSuspicious(value) {
